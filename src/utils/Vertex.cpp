@@ -16,9 +16,7 @@ std::vector<int> Vertex::getVertex() const {
 }
 
 void Vertex::setVertex(std::vector<int> superNode){
-    std::cout << "antes: " << this->vertex.size() << std::endl;
     this->vertex.clear();
     this->vertex = superNode;
-    std::cout << "depois: " << this->vertex.size() << std::endl;
 
 }

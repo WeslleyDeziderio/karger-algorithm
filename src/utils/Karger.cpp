@@ -5,20 +5,19 @@ Karger::Karger() {}
 
 void Karger::merge(int position){
 
-    Edge randomizedEdge = this->graphEdge[position];
+    std::cout << "qtd de arestas: " << this->graphEdge.size() << std::endl;
+    Edge randomizedEdge(this->graphEdge[position]);
     this->graphEdge.erase(this->graphEdge.begin() + position);
-    Vertex superNode(randomizedEdge.getVertex1()->getVertex(), randomizedEdge.getVertex2()->getVertex() );
+    Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
 
     for(int i = 0; i < this->graphEdge.size() ; i++){
-        if(this->graphEdge[i].getVertex1() == randomizedEdge.getVertex1() || this->graphEdge[i].getVertex1() == randomizedEdge.getVertex2()){
-            std::cout << "achou" << std::endl;
-            this->graphEdge[i].getVertex1()->setVertex(superNode.getVertex());
-            // this->graphEdge[i].getVertex2()->setVertex(superNode.getVertex());
+
+        if(this->graphEdge[i].getVertex1() == randomizedEdge.getVertex1()){
+            this->graphEdge[i].getPointerVertex1()->setVertex(superNode.getVertex());
         }
-        if(this->graphEdge[i].getVertex2() == randomizedEdge.getVertex1() || this->graphEdge[i].getVertex2() == randomizedEdge.getVertex2()){
-            std::cout << "achou" << std::endl;
-            // this->graphEdge[i].getVertex1()->setVertex(superNode.getVertex());
-            this->graphEdge[i].getVertex2()->setVertex(superNode.getVertex());
+
+        if(this->graphEdge[i].getVertex2() == randomizedEdge.getVertex2()){
+            this->graphEdge[i].getPointerVertex2()->setVertex(superNode.getVertex());
         }
 
     }
@@ -42,8 +41,8 @@ void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
 void Karger::showGraphEdges(){
     int i = 0;
     for(auto &it : this->graphEdge){
-        std::vector<int> v1(it.getVertex1()->getVertex());
-        std::vector<int> v2(it.getVertex2()->getVertex());
+        std::vector<int> v1(it.getVertex1().getVertex());
+        std::vector<int> v2(it.getVertex2().getVertex());
         std::cout << "Edge(" << i << "): Vertex1: ";
 
         for(int j = 0; j < v1.size() ; j++){
@@ -57,4 +56,8 @@ void Karger::showGraphEdges(){
         i++;
     }
     std::cout << std::endl;
+}
+
+int Karger::edgesSize(){
+    return this->graphEdge.size();
 }

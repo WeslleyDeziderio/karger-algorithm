@@ -14,10 +14,14 @@ public:
     Vertex(std::vector<int>, std::vector<int>);
     std::vector<int> getVertex() const;
     void setVertex(std::vector<int>);
-    bool operator==(Vertex* v)const{
-        std::cout << "usedV" << std::endl;
-        return (vertex == v->getVertex());
+
+    bool operator==(const Vertex* v) const {
+        return (this->vertex == v->getVertex());
     }
+    friend bool operator==(Vertex v1,Vertex v2) {
+        return (v1.getVertex() == v2.getVertex());
+    }
+
 };
 
 #endif // VERTEX_HPP

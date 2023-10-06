@@ -6,18 +6,17 @@
 int main(int argc, char** argv) {
     Data data(argc, argv[1]);
     data.readData();
-    data.printAdjacencyMatrix();
-    data.printAdjacencyList();
-
+    // data.printAdjacencyMatrix();
+    // data.printAdjacencyList();
+ 
     Karger instance;
     instance.setGraphEdges(data.getAdjacencyList());
     instance.showGraphEdges();
-    for(int i = 0 ; i < data.getNumVertices() ; i++){
+
+    while(instance.edgesSize() > 3){
         instance.merge(0);
-      
     }
     instance.showGraphEdges();
 
-    
     return 0;
 }
