@@ -4,11 +4,11 @@
 #include "Edge.hpp"
 class Karger {
 protected:
-    std::vector<Edge> graphEdge;
+    std::vector<Edge*> graphEdge;
 public:
     Karger();
     int randomize();
-    void merge(Edge);
+    void merge(int);
 };
 
 #endif // KARGER_HPP

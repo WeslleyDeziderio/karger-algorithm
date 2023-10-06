@@ -10,7 +10,9 @@ protected:
     std::vector<int> vertex;
 public:
     Vertex();
+    Vertex(std::vector<int>, std::vector<int>);
     std::vector<int> getVertex();
+    void setVertex(std::vector<int>);
 };
 
 #endif // VERTEX_HPP
