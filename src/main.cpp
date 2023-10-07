@@ -8,15 +8,19 @@ int main(int argc, char** argv) {
     data.readData();
     // data.printAdjacencyMatrix();
     // data.printAdjacencyList();
- 
-    Karger instance;
-    instance.setGraphEdges(data.getAdjacencyList());
-    instance.showGraphEdges();
 
-    while(instance.edgesSize() > 3){
-        instance.merge(0);
+    // Karger instance;
+
+    Karger karger(argc, argv[1]);
+    karger.randomize();
+    karger.setGraphEdges(data.getAdjacencyList());
+    karger.showGraphEdges();
+
+    while (karger.edgesSize() > 2){
+        karger.merge(karger.randomize());
     }
-    instance.showGraphEdges();
+
+    karger.showGraphEdges();
 
     return 0;
 }

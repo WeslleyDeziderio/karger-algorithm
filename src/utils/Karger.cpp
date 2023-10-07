@@ -1,15 +1,33 @@
 #include "../../include/utils/Karger.hpp"
-#include <algorithm>
 
 Karger::Karger() {}
 
-void Karger::merge(int position){
+Karger::Karger(int params, char* instance) : kargerData(params, instance) {
+    kargerData.readData();
+}
 
+int Karger::randomize() {
+    const int numVertices = kargerData.getNumVertices();
+
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distr(0, numVertices-1);
+
+    int randomValue = distr(gen);
+
+    return randomValue;
+}
+
+auto Karger::findMinCut(Vertex v, int iterations, int numVertices) {
+    
+}
+
+void Karger::merge(int position){
     Edge randomizedEdge(this->graphEdge[position]);
     this->graphEdge.erase(this->graphEdge.begin() + position);
     Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
 
-    for(int i = 0; i < this->graphEdge.size() ; i++){
+    for (int i = 0; i < this->graphEdge.size(); i++){
 
         if(this->graphEdge[i].getVertex1() == randomizedEdge.getVertex1() || this->graphEdge[i].getVertex1() == randomizedEdge.getVertex2()){
             this->graphEdge[i].getPointerVertex1()->setVertex(superNode.getVertex());
@@ -25,10 +43,10 @@ void Karger::merge(int position){
 void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
 
     int count = 1;
-    for(auto const& i : adjacencyList){
+    for (auto const& i : adjacencyList){
         Vertex auxVertex1(count);
-        for(auto const& j : i){
-            if( j > count){
+        for (auto const& j : i){
+            if (j > count){
                 Vertex auxVertex2(j);
                 Edge auxEdge(auxVertex1, auxVertex2);
                 this->graphEdge.push_back(auxEdge);
