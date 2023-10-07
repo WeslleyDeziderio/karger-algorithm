@@ -7,12 +7,15 @@
 class Karger {
 protected:
     std::vector<Edge> graphEdge;
+    std::vector<Edge> auxGraphEdge;
 public:
     Karger();
     int randomize();
+    void calculateKarger();
+    void minCut(int);
     void merge(int);
     void setGraphEdges(std::list<std::list<int>>);
-    void showGraphEdges();
+    void showGraphEdges(std::vector<Edge>);
     int edgesSize();
 };
 
