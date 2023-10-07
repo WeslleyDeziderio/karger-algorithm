@@ -11,12 +11,8 @@ int main(int argc, char** argv) {
  
     Karger instance;
     instance.setGraphEdges(data.getAdjacencyList());
-    instance.showGraphEdges();
 
-    while(instance.edgesSize() > 3){
-        instance.merge(0);
-    }
-    instance.showGraphEdges();
+
 
     return 0;
 }
