@@ -4,6 +4,7 @@ Karger::Karger() {}
 
 Karger::Karger(int params, char* instance) : kargerData(params, instance) {
     kargerData.readData();
+    setGraphEdges(kargerData.getAdjacencyList());
 }
 
 int Karger::randomize() {
@@ -18,17 +19,47 @@ int Karger::randomize() {
     return randomValue;
 }
 
-auto Karger::contractionLoop() {
-    while (this->edgesSize() > 2) {
-        merge(randomize());
+// void Karger::contractionLoop() {
+//     while (this->edgesSize() > 2) {
+//         merge(randomize());
+//         getSizeBetweenSets();
+//     }
+// }
+
+bool Karger::isCutFound(std::vector<Edge> auxEdges){
+    std::vector<Vertex> uniqueVertices;
+    for(int i = 0 ; i < this->kargerData.getNumVertices(); i++){
+        Vertex auxVertex = auxEdges[i].getVertex1();
+        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
+            uniqueVertices.push_back(auxVertex);
+        }
+        auxVertex = auxEdges[i].getVertex2();
+        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
+            uniqueVertices.push_back(auxVertex);
+        }
+        if(uniqueVertices.size() > 2){
+            std::cout << "tamanho: " << getSizeBetweenSets() << std::endl;
+            return false;
+        }
     }
+    return true;
 }
 
-auto Karger::findMinCut(Vertex v, int iterations, int numVertices) {
+int Karger::getSizeBetweenSets() {
+    std::cout << "tamanho entre os dois conjuntos: " << this->graphEdge.size() << std::endl;
+
+    return this->graphEdge.size();
+}
+
+auto Karger::findMinCut(int iterations) {
     Vertex tempVertex;
+    int tempCutSize = MAX;
+    int cutSize = MIN;
 
     for (int i = 0; i < iterations; ++i) {
-
+        if (cutSize < tempCutSize) {
+            tempCutSize = cutSize;
+        }
     }
 }
 
@@ -67,7 +98,7 @@ void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
 
 }
 
-void Karger::showGraphEdges(){
+void Karger::showGraphEdges(std::vector<Edge>){
     int i = 0;
     for(auto &it : this->graphEdge){
         std::vector<int> v1(it.getVertex1().getVertex());

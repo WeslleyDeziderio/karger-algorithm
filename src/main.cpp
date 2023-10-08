@@ -14,13 +14,7 @@ int main(int argc, char** argv) {
     Karger karger(argc, argv[1]);
     karger.randomize();
     karger.setGraphEdges(data.getAdjacencyList());
-    karger.showGraphEdges();
-
-    while (karger.edgesSize() > 2){
-        karger.merge(karger.randomize());
-    }
-
-    karger.showGraphEdges();
+    karger.showGraphEdges(karger.isCutFound());
 
     return 0;
 }

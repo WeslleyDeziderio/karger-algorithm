@@ -18,6 +18,12 @@ public:
     bool operator==(Edge edge) const {
         return ((this->vertex1 == edge.getVertex1() && this->vertex2 == edge.getVertex2()));
     }
+     bool operator==(Vertex v1) const {
+        return ((this->vertex1 == v1 || this->vertex2 == v1));
+    }
+    bool operator!=(Edge edge) const {
+        return ((this->vertex1 != edge.getVertex1() || this->vertex2 != edge.getVertex2()));
+    }
 };
 
 #endif // EDGE_GPP
