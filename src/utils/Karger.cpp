@@ -1,10 +1,75 @@
 #include "../../include/utils/Karger.hpp"
-#include <algorithm>
 
 Karger::Karger() {}
 
+Karger::Karger(int params, char* instance) : kargerData(params, instance) {
+    kargerData.readData();
+}
+
+int Karger::randomize() {
+    const int numVertices = kargerData.getNumVertices();
+
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distr(0, numVertices-1);
+
+    int randomValue = distr(gen);
+
+    return randomValue;
+}
+
 void Karger::calculateKarger(){
     this->auxGraphEdge = this->graphEdge;
+
+}
+
+int Karger::randomize(int inferiorLimit,int superiorLimit) {
+
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distr(inferiorLimit, superiorLimit);
+
+    int randomValue = distr(gen);
+
+    return randomValue;
+}
+
+bool Karger::isCutFound(std::vector<Edge> auxEdges){
+
+    std::vector<Vertex> uniqueVertices;
+    for(int i = 0 ; i < this->kargerData.getNumVertices(); i++){
+        Vertex auxVertex = auxEdges[i].getVertex1();
+        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
+            uniqueVertices.push_back(auxVertex);
+        }
+        auxVertex = auxEdges[i].getVertex2();
+        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
+            uniqueVertices.push_back(auxVertex);
+        }
+        if(uniqueVertices.size() > 2){
+            return false;
+        }
+    }
+    return true;
+}
+
+void Karger::calculateNaiveKager(){
+
+    int firstCutSize = randomize(1,this->kargerData.getNumVertices()-2);
+    std::vector<int> firstCut;
+    std::vector<int> secondCut;
+
+    for(int i = 0 ; i < firstCutSize ; i++){
+        int randomizedVertex = randomize();
+        if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
+            firstCut.push_back(randomizedVertex);
+        }
+    }
+    for(int i = 0; i < this->kargerData.getNumVertices(); i++){
+        if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
+            secondCut.push_back(i);
+        }
+    }
 
 }
 
