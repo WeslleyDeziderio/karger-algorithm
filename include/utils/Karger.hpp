@@ -19,9 +19,10 @@ public:
     int randomize();
     int randomize(int,int);
     void calculateKarger();
-    void calculateNaiveKager();
+    std::vector<Edge> calculateNaiveKager();
     void minCut(int);
     void merge(int);
+    void merge(std::vector<Edge>&, Edge);
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
     int edgesSize();

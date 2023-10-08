@@ -18,8 +18,14 @@ public:
     bool operator==(const Vertex* v) const {
         return (this->vertex == v->getVertex());
     }
+    bool operator!=(const Vertex* v) const {
+        return (this->vertex != v->getVertex());
+    }
     friend bool operator==(Vertex v1,Vertex v2) {
         return (v1.getVertex() == v2.getVertex());
+    }
+    friend bool operator!=(Vertex v1,Vertex v2) {
+        return (v1.getVertex() != v2.getVertex());
     }
 
 };
