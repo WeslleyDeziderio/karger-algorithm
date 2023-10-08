@@ -18,8 +18,18 @@ int Karger::randomize() {
     return randomValue;
 }
 
+auto Karger::contractionLoop() {
+    while (this->edgesSize() > 2) {
+        merge(randomize());
+    }
+}
+
 auto Karger::findMinCut(Vertex v, int iterations, int numVertices) {
-    
+    Vertex tempVertex;
+
+    for (int i = 0; i < iterations; ++i) {
+
+    }
 }
 
 void Karger::merge(int position){

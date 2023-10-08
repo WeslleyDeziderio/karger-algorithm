@@ -20,6 +20,7 @@ public:
     void merge(int);
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges();
+    auto contractionLoop();
     auto findMinCut(Vertex, int, int);
 };
 
