@@ -54,62 +54,60 @@ bool Karger::isCutFound(std::vector<Edge> auxEdges){
     return true;
 }
 
-std::vector<Edge> Karger::calculateNaiveKager(){
+int Karger::calculateNaiveKager(int executions){
 
-    int firstCutSize = randomize(1,this->kargerData.getNumVertices()-2);
-    std::vector<Vertex> firstCut;
-    std::vector<Vertex> secondCut;
-    std::vector<Edge> naiveKarger(this->graphEdge);
-    int countEdges = 0;
+    std::vector<int> n_exec;
+    for(int e = 0 ; e < executions; e++){
+        std::cout << "exec: " << e << std::endl;
+        int firstCutSize = randomize(1,this->kargerData.getNumVertices()-2);
+        std::vector<Vertex> firstCut;
+        std::vector<Vertex> secondCut;
+        int countEdges = 0;
 
-    for(int i = 0 ; i < firstCutSize ; i++){
-        int randomizedVertex = randomize(1,this->kargerData.getNumVertices());
-        if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
-            Vertex auxVertex(randomizedVertex); 
-            firstCut.push_back(auxVertex);
-            std::cout << "Vertex G1: " << randomizedVertex << std::endl;
+        for(int i = 0 ; i < firstCutSize ; i++){
+            int randomizedVertex = randomize(1,this->kargerData.getNumVertices());
+            if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
+                Vertex auxVertex(randomizedVertex); 
+                firstCut.push_back(auxVertex);
+            }
         }
-    }
-    for(int i = 1; i <= this->kargerData.getNumVertices(); i++){
-        if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
-            Vertex auxVertex(i); 
-            secondCut.push_back(auxVertex);
-            std::cout << "Vertex G2: " << i << std::endl;
+        for(int i = 1; i <= this->kargerData.getNumVertices(); i++){
+            if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
+                Vertex auxVertex(i); 
+                secondCut.push_back(auxVertex);
+            }
         }
-    }
-    std::cout << "Quantidade de vertices: " << kargerData.getNumVertices() << std::endl;
-    std::cout << "Tamanho grupo 1: " << firstCut.size() << std::endl;
 
-    for(int i = 0; i < (firstCut.size() -1); i++){
-        for(int j = i+1;j < (firstCut.size()); j++){
-            Edge auxEdge(firstCut[i],firstCut[j]);
-            for(int k = 0 ; k < naiveKarger.size(); k++){
-
-                if(auxEdge == naiveKarger[k]){
-                    std::vector<int> v1(firstCut[i].getVertex());
-                    std::vector<int> v2(firstCut[j].getVertex());
-                    std::cout << "G1 V: " << v1[0] << "V: " << v2[0] << std::endl;
-                    countEdges++;
+        for(int i = 0; i < (firstCut.size() -1); i++){
+            for(int j = 1;j < (firstCut.size()); j++){
+                Edge auxEdge(firstCut[i],firstCut[j]);
+                for(int k = 0 ; k < this->graphEdge.size(); k++){
+                    if(auxEdge == this->graphEdge[k]){
+                        countEdges++;
+                    }
                 }
             }
         }
-    }
-    std::cout << "Tamanho grupo 2: " << secondCut.size() << std::endl;
-    for(int i = 0; i < (secondCut.size() -1); i++){
-        for(int j = i+1;j < (secondCut.size()); j++){
-            Edge auxEdge(secondCut[i],secondCut[j]);
-            for(int k = 0 ; k < naiveKarger.size(); k++){
-                if(auxEdge == naiveKarger[k]){
-                    std::vector<int> v1(secondCut[i].getVertex());
-                    std::vector<int> v2(secondCut[j].getVertex());
-                    std::cout << "G2 V: " << v1[0] << "V: " << v2[0] << std::endl;
-                    countEdges++;
+
+        for(int i = 0; i < (secondCut.size() -1); i++){
+            for(int j = 1;j < (secondCut.size()); j++){
+                Edge auxEdge(secondCut[i],secondCut[j]);
+                for(int k = 0 ; k < this->graphEdge.size(); k++){
+                    if(auxEdge == this->graphEdge[k]){
+                        countEdges++;
+                    }
                 }
             }
         }
+        n_exec.push_back(countEdges);
     }
-    std::cout << "Arestas entre os dois conjuntos: " << (naiveKarger.size() - countEdges) << std::endl;
-    return naiveKarger;
+    int min = 1215752190;
+    for(int i = 0; i < n_exec.size(); i++){
+        if(n_exec[i] < min){
+            min = n_exec[i];
+        }
+    }
+    return min;
 }
 
 void Karger::minCut(int iterations){

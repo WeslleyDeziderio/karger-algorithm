@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     // data.printAdjacencyList();
  
     Karger instance(argc, argv[1]);
-    instance.showGraphEdges(instance.calculateNaiveKager());
+    std::cout << "min: " << instance.calculateNaiveKager(10000) << std::endl;
 
 
 
