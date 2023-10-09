@@ -9,8 +9,8 @@ int main(int argc, char** argv) {
     // data.printAdjacencyMatrix();
     // data.printAdjacencyList();
  
-    Karger instance(argc, argv[1]);
-    std::cout << "min: " << instance.calculateNaiveKager(10000) << std::endl;
+    Karger instance(argc, argv[1], argv[2]);
+    instance.calculateMinCutNaive(10);
 
 
 

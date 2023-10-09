@@ -3,11 +3,11 @@
 Data::Data() {}
 
 Data::Data(int params, char* instance) {
-    if (params != 2) {
-        std::cerr << "ERROR: Missing parameters!" << std::endl;
-        std::cout << "Usage: ./search <Instance>" << std::endl;
-        exit(1);
-    }
+    // if (params != 2) {
+    //     std::cerr << "ERROR: Missing parameters!" << std::endl;
+    //     std::cout << "Usage: ./search <Instance>" << std::endl;
+    //     exit(1);
+    // }
 
     instanceName = instance;
     numVertices = 0;
@@ -15,7 +15,7 @@ Data::Data(int params, char* instance) {
 
 void Data::readData() {
 	std::ifstream inputData(instanceName, std::ios::in);
-
+    std::cout << instanceName << std::endl;
 	if (!inputData) {
 		std::cerr << "ERROR: File not found!" << std::endl;
         exit(1);
@@ -90,6 +90,17 @@ void Data::printAdjacencyList() {
         ++vertex;
     }
 }
+
+bool Data::isAdjacency(int i, int j) {
+    i = i - 1;
+    j = j - 1;
+    if (this->adjacencyMatrix[i][j] == 1) {
+        return true;
+    }
+    
+    return false;
+} 
+
 
 std::vector<int> Data::getNeighborhoodMatrix(int vertex) {
     std::vector<int> neighbors;

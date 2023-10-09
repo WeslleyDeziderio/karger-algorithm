@@ -1,10 +1,12 @@
 #include "../../include/utils/Karger.hpp"
+#include <map>
 
 Karger::Karger() {}
 
-Karger::Karger(int params, char* instance) : kargerData(params, instance) {
+Karger::Karger(int params, char* instance, char* instance2) : kargerData(params, instance) {
     kargerData.readData();
     setGraphEdges(kargerData.getAdjacencyList());
+    setMinCut(instance2);    
 }
 
 int Karger::randomize() {
@@ -54,67 +56,80 @@ bool Karger::isCutFound(std::vector<Edge> auxEdges){
     return true;
 }
 
-int Karger::calculateNaiveKager(int executions){
+int Karger::calculateNaiveKager(int iterations){
 
-    std::vector<int> n_exec;
-    for(int e = 0 ; e < executions; e++){
-        std::cout << "exec: " << e << std::endl;
+    std::map<int, int> n_exec;
+    for(int e = 0 ; e < iterations; e++){
+
         int firstCutSize = randomize(1,this->kargerData.getNumVertices()-2);
-        std::vector<Vertex> firstCut;
-        std::vector<Vertex> secondCut;
+        std::vector<int> firstCut;
+        std::vector<int> secondCut;
         int countEdges = 0;
 
         for(int i = 0 ; i < firstCutSize ; i++){
             int randomizedVertex = randomize(1,this->kargerData.getNumVertices());
             if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
-                Vertex auxVertex(randomizedVertex); 
-                firstCut.push_back(auxVertex);
+                firstCut.push_back(randomizedVertex);
             }
         }
         for(int i = 1; i <= this->kargerData.getNumVertices(); i++){
             if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
-                Vertex auxVertex(i); 
-                secondCut.push_back(auxVertex);
+                secondCut.push_back(i);
             }
         }
 
-        for(int i = 0; i < (firstCut.size() -1); i++){
-            for(int j = 1;j < (firstCut.size()); j++){
-                Edge auxEdge(firstCut[i],firstCut[j]);
-                for(int k = 0 ; k < this->graphEdge.size(); k++){
-                    if(auxEdge == this->graphEdge[k]){
-                        countEdges++;
-                    }
+        for(int i = 0; i < (firstCut.size()); i++){
+            for(int j = i+1;j < (firstCut.size()); j++){
+                if(kargerData.isAdjacency(firstCut[i],firstCut[j])){
+                    countEdges++;
                 }
             }
         }
 
-        for(int i = 0; i < (secondCut.size() -1); i++){
-            for(int j = 1;j < (secondCut.size()); j++){
-                Edge auxEdge(secondCut[i],secondCut[j]);
-                for(int k = 0 ; k < this->graphEdge.size(); k++){
-                    if(auxEdge == this->graphEdge[k]){
-                        countEdges++;
-                    }
+        for(int i = 0; i < (secondCut.size()); i++){
+            for(int j = i+1;j < (secondCut.size()); j++){
+                if(kargerData.isAdjacency(secondCut[i],secondCut[j])){
+                    countEdges++;
                 }
             }
         }
-        n_exec.push_back(countEdges);
-    }
-    int min = 1215752190;
-    for(int i = 0; i < n_exec.size(); i++){
-        if(n_exec[i] < min){
-            min = n_exec[i];
+        int edgesBetween = this->graphEdge.size() - countEdges;
+        if(n_exec.count(edgesBetween) != 0 ){
+            n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
+        }else{
+            n_exec[edgesBetween] = 1;
         }
     }
-    return min;
+
+    if(n_exec.count(this->minimunCut) != 0){
+        return n_exec[this->minimunCut];
+    }else{
+        return 0;
+    }
+
 }
 
-void Karger::minCut(int iterations){
-
-    for(int i = 0 ; i < iterations ; i++){
-        calculateKarger();
+void Karger::calculateMinCutNaive(int executions){
+    std::map<int, float> cuts;
+    std::cout << "minumin: " << this->minimunCut << std::endl;
+    int increment = 100;
+    for(int i = 0 ; i <= 10000 ; i += increment){
+        int min = calculateNaiveKager(i);
+        float aux = ((float)min/i);
+        std::cout << "Found: " << min <<" P: " << aux << std::endl;
+        cuts[i] = aux; 
+        // if(cuts.count(i) != 0 ){
+        //     cuts[i] = cuts[min] + 1;
+        // }else{
+        //     cuts[i] = 1;
+        // }
     }
+     std::map<int, float>::iterator it = cuts.begin();
+    while(it != cuts.end()){
+        std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
+        ++it;
+    }
+
 
 }
 void Karger::merge(std::vector<Edge>& auxGraphEdges, Edge randomizedEdge){
@@ -194,4 +209,20 @@ void Karger::showGraphEdges(std::vector<Edge> auxGraph){
 
 int Karger::edgesSize(){
     return this->auxGraphEdge.size();
+}
+
+void Karger::setMinCut(std::string filename){
+    std::ifstream file;
+
+    file.open(filename, std::ios::in);
+
+    if(file.is_open()){
+        std::string line;
+        std::getline(file,line);
+
+        this->minimunCut = std::stoi(line);
+    }else{
+        std::cout << "File not found!" << std::endl;
+    }
+    file.close();
 }

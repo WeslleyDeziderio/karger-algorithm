@@ -18,6 +18,7 @@ public:
     Data();
     Data(int params, char* instance);
     void readData();
+    bool isAdjacency(int,int);
     std::string getInstanceName();
     int getNumVertices();
     std::vector<std::vector<int>> getAdjacencyMatrix();
