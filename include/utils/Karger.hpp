@@ -22,6 +22,7 @@ public:
     int randomize(int,int);
     void calculateKarger();
     int calculateNaiveKager(int);
+    int calculateNaiveKagerN(int);
     void calculateMinCutNaive(int);
     void merge(int);
     void merge(std::vector<Edge>&, Edge);

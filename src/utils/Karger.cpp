@@ -1,5 +1,6 @@
 #include "../../include/utils/Karger.hpp"
 #include <map>
+#include <unordered_map> 
 
 Karger::Karger() {}
 
@@ -58,21 +59,24 @@ bool Karger::isCutFound(std::vector<Edge> auxEdges){
 
 int Karger::calculateNaiveKager(int iterations){
 
-    std::map<int, int> n_exec;
+    std::unordered_map<int, int> n_exec;
+    int qEdges = this->graphEdge.size();
+    int qVertices = this->kargerData.getNumVertices();
     for(int e = 0 ; e < iterations; e++){
 
-        int firstCutSize = randomize(1,this->kargerData.getNumVertices()-2);
+        int firstCutSize = randomize(1,qVertices-2);
         std::vector<int> firstCut;
         std::vector<int> secondCut;
+
         int countEdges = 0;
 
         for(int i = 0 ; i < firstCutSize ; i++){
-            int randomizedVertex = randomize(1,this->kargerData.getNumVertices());
+            int randomizedVertex = randomize(1,qVertices);
             if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
                 firstCut.push_back(randomizedVertex);
             }
         }
-        for(int i = 1; i <= this->kargerData.getNumVertices(); i++){
+        for(int i = 1; i <= qVertices; i++){
             if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
                 secondCut.push_back(i);
             }
@@ -93,7 +97,7 @@ int Karger::calculateNaiveKager(int iterations){
                 }
             }
         }
-        int edgesBetween = this->graphEdge.size() - countEdges;
+        int edgesBetween = qEdges - countEdges;
         if(n_exec.count(edgesBetween) != 0 ){
             n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
         }else{
@@ -109,22 +113,89 @@ int Karger::calculateNaiveKager(int iterations){
 
 }
 
+int Karger::calculateNaiveKagerN(int iterations){
+
+    std::map<int, int> n_exec;
+    int qEdges = this->graphEdge.size();
+    int qVertices = this->kargerData.getNumVertices();
+    for(int e = 0 ; e < iterations; e++){
+
+        int firstCutSize = randomize(1,qVertices-2);
+        std::vector<int> firstCut;
+        std::vector<int> secondCut;
+
+        int countEdges = 0;
+
+        for(int i = 1; i <= qVertices; i++){
+            secondCut.push_back(i);
+        }
+
+        for(int i = 0 ; i < firstCutSize ; i++){
+            int randomizedVertex = randomize(0,(secondCut.size()-1));
+            int auxVertex = secondCut[randomizedVertex];
+            secondCut.erase( secondCut.begin() + randomizedVertex);
+            firstCut.push_back(auxVertex);
+        }
+
+        for(int i = 0; i < (firstCut.size()); i++){
+            for(int j = i+1;j < (firstCut.size()); j++){
+                if(kargerData.isAdjacency(firstCut[i],firstCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+        for(int i = 0; i < (secondCut.size()); i++){
+            for(int j = i+1;j < (secondCut.size()); j++){
+                if(kargerData.isAdjacency(secondCut[i],secondCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+        int edgesBetween = qEdges - countEdges;
+        if(n_exec.count(edgesBetween) != 0 ){
+            n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
+        }else{
+            n_exec[edgesBetween] = 1;
+        }
+        if(edgesBetween == this->minimunCut){
+            break;
+        }
+    }
+    std::map<int, int>::iterator it = n_exec.begin();
+    return it->first;
+}
+
 void Karger::calculateMinCutNaive(int executions){
     std::map<int, float> cuts;
     std::cout << "minumin: " << this->minimunCut << std::endl;
-    int increment = 100;
-    for(int i = 0 ; i <= 10000 ; i += increment){
-        int min = calculateNaiveKager(i);
-        float aux = ((float)min/i);
-        std::cout << "Found: " << min <<" P: " << aux << std::endl;
-        cuts[i] = aux; 
-        // if(cuts.count(i) != 0 ){
-        //     cuts[i] = cuts[min] + 1;
-        // }else{
-        //     cuts[i] = 1;
-        // }
+    int increment = 10;
+    for(int i = 1 ; i <= 100 ; i += increment){
+        float count = 0;
+        for(int j = 0; j < executions ; j++){
+            int min = calculateNaiveKagerN(i);
+            // std::cout << min << std::endl;
+            if(min == this->minimunCut){
+                count++;
+            }
+        }
+        cuts[i] = (float)(count/executions); 
+        std::cout << "i: " << i <<" prob: " << cuts[i] << " count: " << count <<std::endl;
     }
-     std::map<int, float>::iterator it = cuts.begin();
+    increment = 100;
+    for(int i = 101 ; i <= 1000 ; i += increment){
+        float count = 0;
+        for(int j = 0; j < executions ; j++){
+            int min = calculateNaiveKagerN(i);
+            // std::cout << min << std::endl;
+            if(min == this->minimunCut){
+                count++;
+            }
+        }
+        cuts[i] = (float)(count/executions); 
+        std::cout << "i: " << i <<" prob: " << cuts[i] << " count: " << count <<std::endl;
+    }
+    std::map<int, float>::iterator it = cuts.begin();
     while(it != cuts.end()){
         std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
         ++it;
