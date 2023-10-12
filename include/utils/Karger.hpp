@@ -7,6 +7,7 @@
 #include "Edge.hpp"
 #include "Vertex.hpp"
 #include "Data.hpp"
+#include <unordered_map>
 
 const int MAX = (0x7FFFFFFF);
 const int MIN = -1;
@@ -20,13 +21,13 @@ public:
     Karger(int, char*);
     int edgesSize();
     int randomize();
+    int randomize(int, int);
     int getSizeBetweenSets();
-    bool isCutFound(std::vector<Edge>);
+    bool calculateKarger(std::vector<Edge>);
     void merge(int);
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
-    void contractionLoop();
-    auto findMinCut(int);
+    void findMinCut();
 };
 
 #endif // KARGER_HPP

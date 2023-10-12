@@ -4,17 +4,8 @@
 #include "../include/utils/Karger.hpp"
 
 int main(int argc, char** argv) {
-    Data data(argc, argv[1]);
-    data.readData();
-    // data.printAdjacencyMatrix();
-    // data.printAdjacencyList();
-
-    // Karger instance;
-
     Karger karger(argc, argv[1]);
-    karger.randomize();
-    karger.setGraphEdges(data.getAdjacencyList());
-    karger.showGraphEdges(karger.isCutFound());
+    karger.findMinCut();
 
     return 0;
 }
