@@ -103,3 +103,14 @@ std::vector<int> Data::getNeighborhoodMatrix(int vertex) {
 
     return neighbors;
 }
+
+bool Data::isAdjacency(int i, int j) {
+    i -= 1;
+    j -= 1;
+    
+    if (this->adjacencyMatrix[i][j] == 1) {
+        return true;
+    }
+
+    return false;
+}

@@ -37,8 +37,17 @@ void Karger::merge(int position){
     this->auxGraph.erase(this->auxGraph.begin() + position);
     Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
 
-    for (int i = 0; i < this->auxGraph.size(); i++){
+    if (randomizedEdge.getVertex1() == randomizedEdge.getVertex2()) {
+        return;
+    }
 
+    for (int i = 0; i < this->auxGraph.size(); i++) {
+        if (this->auxGraph[i] == randomizedEdge) {
+            this->auxGraph.erase(this->auxGraph.begin()+i);
+        }
+    }
+
+    for (int i = 0; i < this->auxGraph.size(); i++){
         if(this->auxGraph[i].getVertex1() == randomizedEdge.getVertex1() || this->auxGraph[i].getVertex1() == randomizedEdge.getVertex2()){
             this->auxGraph[i].getPointerVertex1()->setVertex(superNode.getVertex());
         }
@@ -46,7 +55,6 @@ void Karger::merge(int position){
         if(this->auxGraph[i].getVertex2() == randomizedEdge.getVertex2() || this->auxGraph[i].getVertex2() == randomizedEdge.getVertex1()){
             this->auxGraph[i].getPointerVertex2()->setVertex(superNode.getVertex());
         }
-
     }
 
     showGraphEdges(this->auxGraph);
@@ -70,7 +78,7 @@ bool Karger::calculateKarger(std::vector<Edge> auxEdges){
     return true;
 }
 
-void Karger::findMinCut() {
+int Karger::findMinCut() {
     this->auxGraph = this->graphEdge;
     while (auxGraph.size() > 1) {
         std::cout << "Iter" << " tamanho auxEdge " << this->auxGraph.size() << std::endl;
@@ -79,12 +87,33 @@ void Karger::findMinCut() {
     }
 
     showGraphEdges(this->auxGraph);
-}
 
-int Karger::getSizeBetweenSets() {
-    std::cout << "tamanho entre os dois conjuntos: " << this->graphEdge.size() << std::endl;
+    std::vector<int> firstCut(this->auxGraph[0].getVertex1().getVertex());
+    std::vector<int> secondCut(this->auxGraph[0].getVertex2().getVertex());
 
-    return this->graphEdge.size();
+    int countEdges = 0;
+    int qEdges = this->graphEdge.size();
+    for (int i = 0; i < (firstCut.size()); i++){
+            for (int j = i+1; j < (firstCut.size()); j++){
+                if (kargerData.isAdjacency(firstCut[i], firstCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+        for (int i = 0; i < (secondCut.size()); i++){
+            for (int j = i+1; j < (secondCut.size()); j++){
+                if (kargerData.isAdjacency(secondCut[i], secondCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+    int edgesBetween = qEdges - countEdges;
+
+    std::cout << "Quantidade de Arestas " << qEdges << " CountEdges " << countEdges << " edgesBetween: " << edgesBetween << std::endl;
+
+    return edgesBetween;
 }
 
 void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
