@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     instance.calculateMinCutNaive(1000);
     auto finalTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
-    std::cout << "\nTime taken: " << (timeTaken.count()/1000) << " s\n" << std::endl;
+    std::cout << "\nFinal time: " << (timeTaken.count()/1000) << " s\n" << std::endl;
 
     return 0;
 }

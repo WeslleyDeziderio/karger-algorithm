@@ -1,6 +1,7 @@
 #include "../../include/utils/Karger.hpp"
 #include <map>
 #include <unordered_map> 
+#include <chrono>
 
 Karger::Karger() {}
 
@@ -170,36 +171,56 @@ void Karger::calculateMinCutNaive(int executions){
     std::map<int, float> cuts;
     std::cout << "minumin: " << this->minimunCut << std::endl;
     int increment = 10;
-    for(int i = 1 ; i <= 100 ; i += increment){
+    bool findProb = false;
+    for(int i = 1 ; i <= 91 ; i += increment){
         float count = 0;
+        auto startTime = std::chrono::high_resolution_clock::now();
         for(int j = 0; j < executions ; j++){
             int min = calculateNaiveKagerN(i);
-            // std::cout << min << std::endl;
             if(min == this->minimunCut){
                 count++;
             }
         }
-        cuts[i] = (float)(count/executions); 
-        std::cout << "i: " << i <<" prob: " << cuts[i] << " count: " << count <<std::endl;
+        auto finalTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+        cuts[i] = (float)(count/executions);
+        if((i-increment) > 0){
+            std::cout << "iter(" << i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }else{
+            std::cout << "iter(" << i <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }
+        if(cuts[i] >= 0.99){
+            findProb = true;
+            break;
+        }
     }
-    increment = 100;
-    for(int i = 101 ; i <= 1000 ; i += increment){
-        float count = 0;
-        for(int j = 0; j < executions ; j++){
-            int min = calculateNaiveKagerN(i);
-            // std::cout << min << std::endl;
-            if(min == this->minimunCut){
-                count++;
+    if(!findProb){
+        increment = 100;
+        for(int i = 101 ; i <= 2001 ; i += increment){
+            float count = 0;
+            auto startTime = std::chrono::high_resolution_clock::now();
+            for(int j = 0; j < executions ; j++){
+                int min = calculateNaiveKagerN(i);
+                if(min == this->minimunCut){
+                    count++;
+                }
+            }
+            auto finalTime = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+            cuts[i] = (float)(count/executions); 
+            
+            std::cout << "iter(" <<  i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+         
+            if(cuts[i] >= 0.99){
+                break;
             }
         }
-        cuts[i] = (float)(count/executions); 
-        std::cout << "i: " << i <<" prob: " << cuts[i] << " count: " << count <<std::endl;
     }
-    std::map<int, float>::iterator it = cuts.begin();
-    while(it != cuts.end()){
-        std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
-        ++it;
-    }
+    // std::map<int, float>::iterator it = cuts.begin();
+    // while(it != cuts.end()){
+    //     std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
+    //     ++it;
+    // }
 
 
 }
