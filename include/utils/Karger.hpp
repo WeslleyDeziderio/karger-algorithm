@@ -25,6 +25,7 @@ public:
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
     int findMinCut();
+    void removeDuplicates();
 };
 
 #endif // KARGER_HPP
