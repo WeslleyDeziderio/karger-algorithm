@@ -23,98 +23,18 @@ int Karger::randomize() {
     return randomValue;
 }
 
-void Karger::calculateKarger(){
-    this->auxGraphEdge = this->graphEdge;
-
-}
-
-int Karger::randomize(int inferiorLimit,int superiorLimit) {
+int Karger::randomize(int lowerBound,int upperBound) {
 
     std::random_device rd; 
     std::mt19937 gen(rd()); 
-    std::uniform_int_distribution<> distr(inferiorLimit, superiorLimit);
+    std::uniform_int_distribution<> distr(lowerBound, upperBound);
 
     int randomValue = distr(gen);
 
     return randomValue;
 }
 
-bool Karger::isCutFound(std::vector<Edge> auxEdges){
-
-    std::vector<Vertex> uniqueVertices;
-    for(int i = 0 ; i < this->kargerData.getNumVertices(); i++){
-        Vertex auxVertex = auxEdges[i].getVertex1();
-        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
-            uniqueVertices.push_back(auxVertex);
-        }
-        auxVertex = auxEdges[i].getVertex2();
-        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
-            uniqueVertices.push_back(auxVertex);
-        }
-        if(uniqueVertices.size() > 2){
-            return false;
-        }
-    }
-    return true;
-}
-
 int Karger::calculateNaiveKager(int iterations){
-
-    std::unordered_map<int, int> n_exec;
-    int qEdges = this->graphEdge.size();
-    int qVertices = this->kargerData.getNumVertices();
-    for(int e = 0 ; e < iterations; e++){
-
-        int firstCutSize = randomize(1,qVertices-2);
-        std::vector<int> firstCut;
-        std::vector<int> secondCut;
-
-        int countEdges = 0;
-
-        for(int i = 0 ; i < firstCutSize ; i++){
-            int randomizedVertex = randomize(1,qVertices);
-            if(!(std::find(firstCut.begin(),firstCut.end(), randomizedVertex) != firstCut.end())){
-                firstCut.push_back(randomizedVertex);
-            }
-        }
-        for(int i = 1; i <= qVertices; i++){
-            if(!(std::find(firstCut.begin(),firstCut.end(), i) != firstCut.end())){
-                secondCut.push_back(i);
-            }
-        }
-
-        for(int i = 0; i < (firstCut.size()); i++){
-            for(int j = i+1;j < (firstCut.size()); j++){
-                if(kargerData.isAdjacency(firstCut[i],firstCut[j])){
-                    countEdges++;
-                }
-            }
-        }
-
-        for(int i = 0; i < (secondCut.size()); i++){
-            for(int j = i+1;j < (secondCut.size()); j++){
-                if(kargerData.isAdjacency(secondCut[i],secondCut[j])){
-                    countEdges++;
-                }
-            }
-        }
-        int edgesBetween = qEdges - countEdges;
-        if(n_exec.count(edgesBetween) != 0 ){
-            n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
-        }else{
-            n_exec[edgesBetween] = 1;
-        }
-    }
-
-    if(n_exec.count(this->minimunCut) != 0){
-        return n_exec[this->minimunCut];
-    }else{
-        return 0;
-    }
-
-}
-
-int Karger::calculateNaiveKagerN(int iterations){
 
     std::map<int, int> n_exec;
     int qEdges = this->graphEdge.size();
@@ -176,7 +96,7 @@ void Karger::calculateMinCutNaive(int executions){
         float count = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
         for(int j = 0; j < executions ; j++){
-            int min = calculateNaiveKagerN(i);
+            int min = calculateNaiveKager(i);
             if(min == this->minimunCut){
                 count++;
             }
@@ -189,7 +109,7 @@ void Karger::calculateMinCutNaive(int executions){
         }else{
             std::cout << "iter(" << i <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
         }
-        if(cuts[i] >= 0.99){
+        if(cuts[i] >= 0.98){
             findProb = true;
             break;
         }
@@ -200,7 +120,7 @@ void Karger::calculateMinCutNaive(int executions){
             float count = 0;
             auto startTime = std::chrono::high_resolution_clock::now();
             for(int j = 0; j < executions ; j++){
-                int min = calculateNaiveKagerN(i);
+                int min = calculateNaiveKager(i);
                 if(min == this->minimunCut){
                     count++;
                 }
@@ -211,7 +131,7 @@ void Karger::calculateMinCutNaive(int executions){
             
             std::cout << "iter(" <<  i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
          
-            if(cuts[i] >= 0.99){
+            if(cuts[i] >= 0.98){
                 break;
             }
         }
@@ -223,25 +143,6 @@ void Karger::calculateMinCutNaive(int executions){
     // }
 
 
-}
-void Karger::merge(std::vector<Edge>& auxGraphEdges, Edge randomizedEdge){
-
-
-    Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
-
-    for(int i = 0; i < auxGraphEdges.size() ; i++){
-
-        if(auxGraphEdges[i] == randomizedEdge){
-            auxGraphEdges.erase(auxGraphEdges.begin() + i);
-        }
-        if(auxGraphEdges[i].getVertex1() == randomizedEdge.getVertex1() || auxGraphEdges[i].getVertex1() == randomizedEdge.getVertex2()){
-            auxGraphEdges[i].getPointerVertex1()->setVertex(superNode.getVertex());
-        }
-
-        if(auxGraphEdges[i].getVertex2() == randomizedEdge.getVertex2() || auxGraphEdges[i].getVertex2() == randomizedEdge.getVertex1()){
-            auxGraphEdges[i].getPointerVertex2()->setVertex(superNode.getVertex());
-        }
-    }
 }
 
 void Karger::merge(int position){
