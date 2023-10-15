@@ -2,14 +2,6 @@
 
 Data::Data() {}
 
-// Data::Data(int params, char* instance) {
-//     // if (params != 2) {
-//     //     std::cerr << "ERROR: Missing parameters!" << std::endl;
-//     //     std::cout << "Usage: ./search <Instance>" << std::endl;
-//     //     exit(1);
-//     // }
-// }
-
 Data::Data(int params, char* instance, char* instanceOut) {
     if (params != 3) {
         std::cerr << "ERROR: Missing parameters!" << std::endl;

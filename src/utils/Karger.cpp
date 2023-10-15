@@ -1,16 +1,7 @@
 #include "../../include/utils/Karger.hpp"
 
-#include <map>
-#include <unordered_map> 
-#include <chrono>
 
 Karger::Karger() {}
-
-// Karger::Karger(int params, char* instance, char* instance2) : kargerData(params, instance) {
-//     kargerData.readData();
-//     setGraphEdges(kargerData.getAdjacencyList());
-//     setMinCut(instance2);    
-// }
 
 Karger::Karger(int params, char* instance, char* instanceOut) : kargerData(params, instance, instanceOut) {
     kargerData.readData();
@@ -102,7 +93,7 @@ int Karger::calculateNaiveKager(int iterations){
 
 void Karger::calculateMinCutNaive(int executions){
     std::map<int, float> cuts;
-    std::cout << "minumin: " << this->minimunCut << std::endl;
+    std::cout << "minimum: " << this->minimunCut << std::endl;
     int increment = 10;
     bool findProb = false;
     for(int i = 1 ; i <= 91 ; i += increment){
@@ -168,31 +159,8 @@ void Karger::merge(int position){
             this->auxGraph.erase(this->auxGraph.begin()+i);
         }
     }
-    auto startTime = std::chrono::high_resolution_clock::now();
 
     removeDuplicates();
-	
-	auto finalTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
-    std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
-}
-
-bool Karger::calculateKarger(std::vector<Edge> auxEdges){
-    std::vector<Vertex> uniqueVertices;
-    for(int i = 0 ; i < auxEdges.size(); i++){
-        Vertex auxVertex = auxEdges[i].getVertex1();
-        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
-            uniqueVertices.push_back(auxVertex);
-        }
-        auxVertex = auxEdges[i].getVertex2();
-        if(!(std::find(auxEdges.begin(), auxEdges.end(), auxVertex) != auxEdges.end())){
-            uniqueVertices.push_back(auxVertex);
-        }
-        if(uniqueVertices.size() > 2){
-            return false;
-        }
-    }
-    return true;
 }
 
 void Karger::calculateMinKarger(int executions){
@@ -269,25 +237,11 @@ int Karger::findMinCut(int executions) {
 
     for (int e = 0; e < executions; e++) {
         this->auxGraph = this->graphEdge;
-        
-        auto startTime = std::chrono::high_resolution_clock::now();
-
+    
          while (auxGraph.size() > 1) {
             int pos = randomize(0, this->auxGraph.size()-1);
-            auto startTime3 = std::chrono::high_resolution_clock::now();
-
             merge(pos);
-
-            auto finalTime3 = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double, std::milli> timeTaken3 = finalTime3-startTime3;
-            std::cout << "\nTime taken merge: " << timeTaken3.count() << " ms\n" << std::endl;
         }
-
-        auto finalTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
-        std::cout << "\nTime taken karger: " << timeTaken.count() << " ms\n" << std::endl;
-
-        auto startTime2 = std::chrono::high_resolution_clock::now();
 
         std::vector<int> firstCut(this->auxGraph[0].getVertex1().getVertex());
         std::vector<int> secondCut(this->auxGraph[0].getVertex2().getVertex());
@@ -321,10 +275,6 @@ int Karger::findMinCut(int executions) {
             break;
         }
 
-
-        auto finalTime2 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> timeTaken2 = finalTime2-startTime2;
-        std::cout << "\nTime taken corte: " << timeTaken2.count() << " ms\n" << std::endl;
     }
 
     std::map<int, int>::iterator it = numExec.begin();

@@ -6,7 +6,6 @@
 #include <map>
 #include <string>
 #include <chrono>
-#include <unordered_set>
 
 #include "Edge.hpp"
 #include "Vertex.hpp"
@@ -16,7 +15,6 @@ class Karger {
 protected:
     Data kargerData;
     std::vector<Edge> graphEdge;
-    std::vector<Edge> auxGraphEdge;
     std::vector<Edge> auxGraph;
     int minimunCut;
 public:
