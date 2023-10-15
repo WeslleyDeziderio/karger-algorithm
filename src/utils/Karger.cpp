@@ -140,6 +140,7 @@ void Karger::calculateMinCutNaive(int executions){
             }
         }
     }
+    createTxtOutput(cuts, "naive");
 }
 
 void Karger::merge(int position){
@@ -212,6 +213,7 @@ void Karger::calculateMinKarger(int executions){
             }
         }
     }
+    createTxtOutput(cuts, "karger");
 }
 
 void Karger::setMinCut(std::string filename){
@@ -336,4 +338,22 @@ void Karger::showGraphEdges(std::vector<Edge> auxGraph){
         i++;
     }
     std::cout << std::endl;
+}
+
+void Karger::createTxtOutput(std::map<int, float> out, std::string fileName) {
+    std::ofstream myFile;
+    myFile.open("out_" + fileName + ".txt");
+
+    std::map<int, float>::iterator it = out.begin();
+    while (it != out.end()) {
+        if (it->first > 1) {
+            myFile << it->first-1 << " ; " << it->second << std::endl;
+        } else {
+            myFile << it->first << " ; " << it->second << std::endl;        
+        }
+        
+        ++it;
+    }
+
+    myFile.close();
 }

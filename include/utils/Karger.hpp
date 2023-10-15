@@ -33,6 +33,7 @@ public:
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
     void removeDuplicates();
+    void createTxtOutput(std::map<int, float>, std::string);
 };
 
 #endif // KARGER_HPP
