@@ -3,28 +3,33 @@
 
 #include <algorithm>
 #include <random>
+#include <map>
+#include <string>
+#include <chrono>
 
 #include "Edge.hpp"
 #include "Vertex.hpp"
 #include "Data.hpp"
-#include <unordered_map>
 
 class Karger {
 protected:
     Data kargerData;
     std::vector<Edge> graphEdge;
     std::vector<Edge> auxGraph;
+    int minimunCut;
 public:
     Karger();
-    Karger(int, char*);
+    Karger(int, char*, char*);
     int edgesSize();
+    void merge(int);
     int randomize();
     int randomize(int, int);
     bool calculateKarger(std::vector<Edge>);
-    void merge(int);
+    void calculateMinKarger(int);
+    void setMinCut(std::string);
+    int findMinCut(int);
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
-    int findMinCut();
     void removeDuplicates();
 };
 

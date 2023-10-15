@@ -16,7 +16,7 @@ protected:
     std::list<std::list<int>> adjacencyList;
 public:
     Data();
-    Data(int params, char* instance);
+    Data(int, char*, char*);
     void readData();
     std::string getInstanceName();
     int getNumVertices();
@@ -24,7 +24,6 @@ public:
     void printAdjacencyMatrix();
     std::list<std::list<int>> getAdjacencyList();
     void printAdjacencyList();
-    std::vector<int> getNeighborhoodMatrix(int);
     bool isAdjacency(int, int);
 };
 

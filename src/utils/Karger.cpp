@@ -2,10 +2,15 @@
 
 Karger::Karger() {}
 
-Karger::Karger(int params, char* instance) : kargerData(params, instance) {
+Karger::Karger(int params, char* instance, char* instanceOut) : kargerData(params, instance, instanceOut) {
     kargerData.readData();
+    setMinCut(instanceOut);
     setGraphEdges(kargerData.getAdjacencyList());
-    showGraphEdges(this->graphEdge);
+    // showGraphEdges(this->graphEdge);
+}
+
+int Karger::edgesSize(){
+    return this->graphEdge.size();
 }
 
 int Karger::randomize() {
@@ -33,6 +38,8 @@ int Karger::randomize(int lowerBound, int upperBound) {
 }
 
 void Karger::merge(int position){
+
+
     Edge randomizedEdge(this->auxGraph[position]);
     this->auxGraph.erase(this->auxGraph.begin() + position);
     Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
@@ -49,8 +56,13 @@ void Karger::merge(int position){
             this->auxGraph.erase(this->auxGraph.begin()+i);
         }
     }
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     removeDuplicates();
-    showGraphEdges(this->auxGraph);
+
+    auto finalTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+    std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
 }
 
 bool Karger::calculateKarger(std::vector<Edge> auxEdges){
@@ -71,6 +83,143 @@ bool Karger::calculateKarger(std::vector<Edge> auxEdges){
     return true;
 }
 
+void Karger::calculateMinKarger(int executions){
+    std::map<int, float> cuts;
+    std::cout << "minimum: " << this->minimunCut << std::endl;
+    int increment = 10;
+    bool findProb = false;
+    for(int i = 1 ; i <= 91 ; i += increment){
+        float count = 0;
+        auto startTime = std::chrono::high_resolution_clock::now();
+        for(int j = 0; j < executions ; j++){
+            int min = findMinCut(i);
+            if(min == this->minimunCut){
+                count++;
+            }
+        }
+        auto finalTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+        cuts[i] = (float)(count/executions);
+        if((i-increment) > 0){
+            std::cout << "iter(" << i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }else{
+            std::cout << "iter(" << i <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }
+        if(cuts[i] >= 0.98){
+            findProb = true;
+            break;
+        }
+    }
+    if(!findProb){
+        increment = 100;
+        for(int i = 101 ; i <= 2001 ; i += increment){
+            float count = 0;
+            auto startTime = std::chrono::high_resolution_clock::now();
+            for(int j = 0; j < executions ; j++){
+                int min = findMinCut(i);
+                if(min == this->minimunCut){
+                    count++;
+                }
+            }
+            auto finalTime = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+            cuts[i] = (float)(count/executions); 
+
+            std::cout << "iter(" <<  i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+
+            if(cuts[i] >= 0.98){
+                break;
+            }
+        }
+    }
+}
+
+void Karger::setMinCut(std::string filename){
+    std::ifstream file;
+
+    file.open(filename, std::ios::in);
+
+    if(file.is_open()){
+        std::string line;
+        std::getline(file,line);
+
+
+        this->minimunCut = std::stoi(line);
+    }else{
+        std::cout << "File not found!" << std::endl;
+    }
+
+    file.close();
+}
+
+int Karger::findMinCut(int executions) {
+    std::map<int, int> numExec;
+
+    for (int e = 0; e < executions; e++) {
+        this->auxGraph = this->graphEdge;
+        
+        auto startTime = std::chrono::high_resolution_clock::now();
+
+         while (auxGraph.size() > 1) {
+            int pos = randomize(0, this->auxGraph.size()-1);
+            auto startTime3 = std::chrono::high_resolution_clock::now();
+
+            merge(pos);
+
+            auto finalTime3 = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, std::milli> timeTaken3 = finalTime3-startTime3;
+            std::cout << "\nTime taken merge: " << timeTaken3.count() << " ms\n" << std::endl;
+        }
+
+        auto finalTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+        std::cout << "\nTime taken karger: " << timeTaken.count() << " ms\n" << std::endl;
+
+        auto startTime2 = std::chrono::high_resolution_clock::now();
+
+        std::vector<int> firstCut(this->auxGraph[0].getVertex1().getVertex());
+        std::vector<int> secondCut(this->auxGraph[0].getVertex2().getVertex());
+
+        int countEdges = 0;
+        int qEdges = this->graphEdge.size();
+        for(int i = 0; i < (firstCut.size()); i++){
+            for(int j = i+1; j < (firstCut.size()); j++){
+                if (kargerData.isAdjacency(firstCut[i], firstCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+        for (int i = 0; i < (secondCut.size()); i++){
+            for (int j = i+1; j < (secondCut.size()); j++){
+                if (kargerData.isAdjacency(secondCut[i], secondCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+        int edgesBetween = qEdges - countEdges;
+
+        if(numExec.count(edgesBetween) != 0 ){
+            numExec[edgesBetween] = numExec[edgesBetween] + 1;
+        }else{
+            numExec[edgesBetween] = 1;
+        }
+        if(edgesBetween == this->minimunCut){
+            break;
+        }
+
+
+        auto finalTime2 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken2 = finalTime2-startTime2;
+        std::cout << "\nTime taken corte: " << timeTaken2.count() << " ms\n" << std::endl;
+    }
+
+    std::map<int, int>::iterator it = numExec.begin();
+
+    return it->first;
+}
+
 void Karger::removeDuplicates(){
 
     if(this->auxGraph.size() == 1){
@@ -89,43 +238,6 @@ void Karger::removeDuplicates(){
             }
         }
     }
-}
-
-int Karger::findMinCut() {
-    this->auxGraph = this->graphEdge;
-    while (auxGraph.size() > 1) {
-        std::cout << "Iter" << " tamanho auxEdge " << this->auxGraph.size() << std::endl;
-        int pos = randomize(0, this->auxGraph.size()-1);
-        merge(pos);
-    }
-    showGraphEdges(this->auxGraph);
-
-    std::vector<int> firstCut(this->auxGraph[0].getVertex1().getVertex());
-    std::vector<int> secondCut(this->auxGraph[0].getVertex2().getVertex());
-
-    int countEdges = 0;
-    int qEdges = this->graphEdge.size();
-    for(int i = 0; i < (firstCut.size()); i++){
-        for(int j = i+1; j < (firstCut.size()); j++){
-            if (kargerData.isAdjacency(firstCut[i], firstCut[j])){
-                countEdges++;
-            }
-        }
-    }
-
-    for (int i = 0; i < (secondCut.size()); i++){
-        for (int j = i+1; j < (secondCut.size()); j++){
-            if (kargerData.isAdjacency(secondCut[i], secondCut[j])){
-                countEdges++;
-            }
-        }
-    }
-
-    int edgesBetween = qEdges - countEdges;
-
-    std::cout << "Quantidade de Arestas " << qEdges << " CountEdges " << countEdges << " edgesBetween: " << edgesBetween << std::endl;
-
-    return edgesBetween;
 }
 
 void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
@@ -162,8 +274,4 @@ void Karger::showGraphEdges(std::vector<Edge> auxGraph){
         i++;
     }
     std::cout << std::endl;
-}
-
-int Karger::edgesSize(){
-    return this->graphEdge.size();
 }

@@ -4,8 +4,9 @@
 #include "../include/utils/Karger.hpp"
 
 int main(int argc, char** argv) {
-    Karger karger(argc, argv[1]);
-    karger.findMinCut();
+    Karger karger(argc, argv[1], argv[2]);
+    // karger.findMinCut(1000);
+    karger.calculateMinKarger(50);
 
     return 0;
 }
