@@ -2,6 +2,14 @@
 
 Data::Data() {}
 
+Data::Data(int params, char* instance) {
+    // if (params != 2) {
+    //     std::cerr << "ERROR: Missing parameters!" << std::endl;
+    //     std::cout << "Usage: ./search <Instance>" << std::endl;
+    //     exit(1);
+    // }
+}
+
 Data::Data(int params, char* instance, char* instanceOut) {
     if (params != 3) {
         std::cerr << "ERROR: Missing parameters!" << std::endl;
@@ -15,7 +23,7 @@ Data::Data(int params, char* instance, char* instanceOut) {
 
 void Data::readData() {
 	std::ifstream inputData(instanceName, std::ios::in);
-
+    std::cout << instanceName << std::endl;
 	if (!inputData) {
 		std::cerr << "ERROR: File not found!" << std::endl;
         exit(1);
@@ -92,12 +100,11 @@ void Data::printAdjacencyList() {
 }
 
 bool Data::isAdjacency(int i, int j) {
-    i -= 1;
-    j -= 1;
-    
+    i = i - 1;
+    j = j - 1;
     if (this->adjacencyMatrix[i][j] == 1) {
         return true;
     }
-
+    
     return false;
-}
+} 

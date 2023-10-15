@@ -1,12 +1,20 @@
 #include "../../include/utils/Karger.hpp"
 
+#include <map>
+#include <unordered_map> 
+#include <chrono>
+
 Karger::Karger() {}
+
+Karger::Karger(int params, char* instance, char* instance2) : kargerData(params, instance) {
+    kargerData.readData();
+    setGraphEdges(kargerData.getAdjacencyList());
+    setMinCut(instance2);    
 
 Karger::Karger(int params, char* instance, char* instanceOut) : kargerData(params, instance, instanceOut) {
     kargerData.readData();
     setMinCut(instanceOut);
     setGraphEdges(kargerData.getAdjacencyList());
-    // showGraphEdges(this->graphEdge);
 }
 
 int Karger::edgesSize(){
@@ -37,6 +45,128 @@ int Karger::randomize(int lowerBound, int upperBound) {
     return randomValue;
 }
 
+int Karger::calculateNaiveKager(int iterations){
+
+    std::map<int, int> n_exec;
+    int qEdges = this->graphEdge.size();
+    int qVertices = this->kargerData.getNumVertices();
+    for(int e = 0 ; e < iterations; e++){
+
+        int firstCutSize = randomize(1,qVertices-2);
+        std::vector<int> firstCut;
+        std::vector<int> secondCut;
+
+        int countEdges = 0;
+
+        for(int i = 1; i <= qVertices; i++){
+            secondCut.push_back(i);
+        }
+
+        for(int i = 0 ; i < firstCutSize ; i++){
+            int randomizedVertex = randomize(0,(secondCut.size()-1));
+            int auxVertex = secondCut[randomizedVertex];
+            secondCut.erase( secondCut.begin() + randomizedVertex);
+            firstCut.push_back(auxVertex);
+        }
+
+        for(int i = 0; i < (firstCut.size()); i++){
+            for(int j = i+1;j < (firstCut.size()); j++){
+                if(kargerData.isAdjacency(firstCut[i],firstCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+
+        for(int i = 0; i < (secondCut.size()); i++){
+            for(int j = i+1;j < (secondCut.size()); j++){
+                if(kargerData.isAdjacency(secondCut[i],secondCut[j])){
+                    countEdges++;
+                }
+            }
+        }
+        int edgesBetween = qEdges - countEdges;
+        if(n_exec.count(edgesBetween) != 0 ){
+            n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
+        }else{
+            n_exec[edgesBetween] = 1;
+        }
+        if(edgesBetween == this->minimunCut){
+            break;
+        }
+    }
+    std::map<int, int>::iterator it = n_exec.begin();
+    return it->first;
+}
+
+void Karger::calculateMinCutNaive(int executions){
+    std::map<int, float> cuts;
+    std::cout << "minumin: " << this->minimunCut << std::endl;
+    int increment = 10;
+    bool findProb = false;
+    for(int i = 1 ; i <= 91 ; i += increment){
+        float count = 0;
+        auto startTime = std::chrono::high_resolution_clock::now();
+        for(int j = 0; j < executions ; j++){
+            int min = calculateNaiveKager(i);
+            if(min == this->minimunCut){
+                count++;
+            }
+        }
+        auto finalTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+        cuts[i] = (float)(count/executions);
+        if((i-increment) > 0){
+            std::cout << "iter(" << i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }else{
+            std::cout << "iter(" << i <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+        }
+        if(cuts[i] >= 0.98){
+            findProb = true;
+            break;
+        }
+    }
+    if(!findProb){
+        increment = 100;
+        for(int i = 101 ; i <= 2001 ; i += increment){
+            float count = 0;
+            auto startTime = std::chrono::high_resolution_clock::now();
+            for(int j = 0; j < executions ; j++){
+                int min = calculateNaiveKager(i);
+                if(min == this->minimunCut){
+                    count++;
+                }
+            }
+            auto finalTime = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+            cuts[i] = (float)(count/executions); 
+            
+            std::cout << "iter(" <<  i-1 <<") prob: " << cuts[i] << " Time: " << (timeTaken.count()/1000) << "s" <<std::endl;
+         
+            if(cuts[i] >= 0.98){
+                break;
+            }
+        }
+    }
+    // std::map<int, float>::iterator it = cuts.begin();
+    // while(it != cuts.end()){
+    //     std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
+    //     ++it;
+    // }
+
+
+}
+
+void Karger::merge(int position){
+
+    Edge randomizedEdge(this->auxGraphEdge[position]);
+    this->auxGraphEdge.erase(this->auxGraphEdge.begin() + position);
+    Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
+
+    for(int i = 0; i < this->auxGraphEdge.size() ; i++){
+
+        if(this->auxGraphEdge[i].getVertex1() == randomizedEdge.getVertex1() || this->auxGraphEdge[i].getVertex1() == randomizedEdge.getVertex2()){
+            this->auxGraphEdge[i].getPointerVertex1()->setVertex(superNode.getVertex());
+
 void Karger::merge(int position){
 
 
@@ -59,7 +189,14 @@ void Karger::merge(int position){
     auto startTime = std::chrono::high_resolution_clock::now();
 
     removeDuplicates();
+	
+	auto finalTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
+    std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
+}
 
+void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
+    
     auto finalTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
     std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
@@ -274,4 +411,20 @@ void Karger::showGraphEdges(std::vector<Edge> auxGraph){
         i++;
     }
     std::cout << std::endl;
+}
+
+void Karger::setMinCut(std::string filename){
+    std::ifstream file;
+
+    file.open(filename, std::ios::in);
+
+    if(file.is_open()){
+        std::string line;
+        std::getline(file,line);
+
+        this->minimunCut = std::stoi(line);
+    }else{
+        std::cout << "File not found!" << std::endl;
+    }
+    file.close();
 }

@@ -18,7 +18,7 @@ public:
     bool operator==(const Vertex* v) const {
         return (this->vertex == v->getVertex());
     }
-     bool operator!=(const Vertex* v) const {
+    bool operator!=(const Vertex* v) const {
         return (this->vertex != v->getVertex());
     }
     friend bool operator==(Vertex v1,Vertex v2) {
