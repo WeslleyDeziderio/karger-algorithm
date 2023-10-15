@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <chrono>
+#include <unordered_set>
 
 #include "Edge.hpp"
 #include "Vertex.hpp"
@@ -16,15 +17,6 @@ protected:
     Data kargerData;
     std::vector<Edge> graphEdge;
     std::vector<Edge> auxGraphEdge;
-    int minimunCut;
-
-public:
-    Karger();
-    Karger(int, char*, char*);
-    int randomize();
-    int randomize(int,int);
-    int calculateNaiveKager(int);
-    void calculateMinCutNaive(int);
     std::vector<Edge> auxGraph;
     int minimunCut;
 public:
@@ -36,12 +28,12 @@ public:
     int randomize(int, int);
     bool calculateKarger(std::vector<Edge>);
     void calculateMinKarger(int);
+    int calculateNaiveKager(int);
+    void calculateMinCutNaive(int);
     void setMinCut(std::string);
     int findMinCut(int);
     void setGraphEdges(std::list<std::list<int>>);
     void showGraphEdges(std::vector<Edge>);
-    int edgesSize();
-    void setMinCut(std::string);
     void removeDuplicates();
 };
 

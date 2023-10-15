@@ -6,10 +6,11 @@
 
 Karger::Karger() {}
 
-Karger::Karger(int params, char* instance, char* instance2) : kargerData(params, instance) {
-    kargerData.readData();
-    setGraphEdges(kargerData.getAdjacencyList());
-    setMinCut(instance2);    
+// Karger::Karger(int params, char* instance, char* instance2) : kargerData(params, instance) {
+//     kargerData.readData();
+//     setGraphEdges(kargerData.getAdjacencyList());
+//     setMinCut(instance2);    
+// }
 
 Karger::Karger(int params, char* instance, char* instanceOut) : kargerData(params, instance, instanceOut) {
     kargerData.readData();
@@ -85,6 +86,7 @@ int Karger::calculateNaiveKager(int iterations){
             }
         }
         int edgesBetween = qEdges - countEdges;
+
         if(n_exec.count(edgesBetween) != 0 ){
             n_exec[edgesBetween] = n_exec[edgesBetween] + 1;
         }else{
@@ -147,29 +149,9 @@ void Karger::calculateMinCutNaive(int executions){
             }
         }
     }
-    // std::map<int, float>::iterator it = cuts.begin();
-    // while(it != cuts.end()){
-    //     std::cout << "iterações: " << it->first << " Probabilidade: " << it->second << std::endl;
-    //     ++it;
-    // }
-
-
 }
 
 void Karger::merge(int position){
-
-    Edge randomizedEdge(this->auxGraphEdge[position]);
-    this->auxGraphEdge.erase(this->auxGraphEdge.begin() + position);
-    Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
-
-    for(int i = 0; i < this->auxGraphEdge.size() ; i++){
-
-        if(this->auxGraphEdge[i].getVertex1() == randomizedEdge.getVertex1() || this->auxGraphEdge[i].getVertex1() == randomizedEdge.getVertex2()){
-            this->auxGraphEdge[i].getPointerVertex1()->setVertex(superNode.getVertex());
-
-void Karger::merge(int position){
-
-
     Edge randomizedEdge(this->auxGraph[position]);
     this->auxGraph.erase(this->auxGraph.begin() + position);
     Vertex superNode(randomizedEdge.getVertex1().getVertex(), randomizedEdge.getVertex2().getVertex() );
@@ -191,13 +173,6 @@ void Karger::merge(int position){
     removeDuplicates();
 	
 	auto finalTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
-    std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
-}
-
-void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
-    
-    auto finalTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
     std::cout << "\nTime taken remove duplicates: " << timeTaken.count() << " ms\n" << std::endl;
 }
@@ -374,7 +349,7 @@ void Karger::removeDuplicates(){
                 this->auxGraph.erase(this->auxGraph.begin()+j);
             }
         }
-    }
+    } 
 }
 
 void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
@@ -411,20 +386,4 @@ void Karger::showGraphEdges(std::vector<Edge> auxGraph){
         i++;
     }
     std::cout << std::endl;
-}
-
-void Karger::setMinCut(std::string filename){
-    std::ifstream file;
-
-    file.open(filename, std::ios::in);
-
-    if(file.is_open()){
-        std::string line;
-        std::getline(file,line);
-
-        this->minimunCut = std::stoi(line);
-    }else{
-        std::cout << "File not found!" << std::endl;
-    }
-    file.close();
 }

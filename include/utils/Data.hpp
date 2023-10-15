@@ -25,7 +25,6 @@ public:
     void printAdjacencyMatrix();
     std::list<std::list<int>> getAdjacencyList();
     void printAdjacencyList();
-    bool isAdjacency(int, int);
 };
 
 #endif // DATA_HPP
