@@ -5,19 +5,17 @@
 #include <chrono>
 
 int main(int argc, char** argv) {
-    // Data data(argc, argv[1]);
-    // data.readData();
-    // data.printAdjacencyMatrix();
-    // data.printAdjacencyList();
- 
     Karger instance(argc, argv[1], argv[2]);
 
-    
     auto startTime = std::chrono::high_resolution_clock::now();
     instance.calculateMinCutNaive(1000);
     auto finalTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> timeTaken = finalTime-startTime;
     std::cout << "\nFinal time: " << (timeTaken.count()/1000) << " s\n" << std::endl;
+
+    Karger karger(argc, argv[1], argv[2]);
+    // karger.findMinCut(1000);
+    karger.calculateMinKarger(50);
 
     return 0;
 }

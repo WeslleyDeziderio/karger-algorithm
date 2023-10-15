@@ -27,7 +27,6 @@ public:
     friend bool operator!=(Vertex v1,Vertex v2) {
         return (v1.getVertex() != v2.getVertex());
     }
-
 };
 
 #endif // VERTEX_HPP

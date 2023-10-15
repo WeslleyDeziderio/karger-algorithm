@@ -8,6 +8,14 @@ Data::Data(int params, char* instance) {
     //     std::cout << "Usage: ./search <Instance>" << std::endl;
     //     exit(1);
     // }
+}
+
+Data::Data(int params, char* instance, char* instanceOut) {
+    if (params != 3) {
+        std::cerr << "ERROR: Missing parameters!" << std::endl;
+        std::cout << "Usage: ./min-cut <Instance In> <Instance Out>" << std::endl;
+        exit(1);
+    }
 
     instanceName = instance;
     numVertices = 0;
@@ -100,17 +108,3 @@ bool Data::isAdjacency(int i, int j) {
     
     return false;
 } 
-
-
-std::vector<int> Data::getNeighborhoodMatrix(int vertex) {
-    std::vector<int> neighbors;
-
-    vertex -= 1;
-    for (int i = 0; i < this->numVertices; ++i) {
-        if (this->adjacencyMatrix[vertex][i] == 1) {
-            neighbors.push_back(i+1);
-        }
-    }
-
-    return neighbors;
-}

@@ -16,7 +16,7 @@ protected:
     std::list<std::list<int>> adjacencyList;
 public:
     Data();
-    Data(int params, char* instance);
+    Data(int, char*, char*);
     void readData();
     bool isAdjacency(int,int);
     std::string getInstanceName();
@@ -25,7 +25,7 @@ public:
     void printAdjacencyMatrix();
     std::list<std::list<int>> getAdjacencyList();
     void printAdjacencyList();
-    std::vector<int> getNeighborhoodMatrix(int);
+    bool isAdjacency(int, int);
 };
 
 #endif // DATA_HPP
