@@ -161,7 +161,6 @@ void Karger::merge(int position){
         }
     }
 
-    removeDuplicates();
 }
 
 void Karger::calculateMinKarger(int executions){
@@ -282,26 +281,6 @@ int Karger::findMinCut(int executions) {
     std::map<int, int>::iterator it = numExec.begin();
 
     return it->first;
-}
-
-void Karger::removeDuplicates(){
-
-    if(this->auxGraph.size() == 1){
-        return;
-    }
-    for(int i = 0; i < (this->auxGraph.size()); i++){
-        Edge oppositeDirection(this->auxGraph[i].getVertex2(),this->auxGraph[i].getVertex1());
-        if(this->auxGraph[i].getVertex2() == this->auxGraph[i].getVertex1()){
-            this->auxGraph.erase(this->auxGraph.begin()+i);
-        }
-        for(int j = i+1; j < (this->auxGraph.size()); j++){
-            if (this->auxGraph[i] == this->auxGraph[j]){
-                this->auxGraph.erase(this->auxGraph.begin()+j);
-            }else if(oppositeDirection == this->auxGraph[j]){
-                this->auxGraph.erase(this->auxGraph.begin()+j);
-            }
-        }
-    } 
 }
 
 void Karger::setGraphEdges(std::list<std::list<int>> adjacencyList){
