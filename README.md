@@ -25,3 +25,7 @@ for N iter it must be calibrated by the student. The tip is to stop increasing t
 is very close to 100%.
 
 Test cases. <https://www.dropbox.com/sh/b9vcwq0u3rj516o/AAAlvn2_ONQ7srmq5s2KaVwla?dl=0>
+
+## Running
+
+Compile the program using `make`. To execute an instance, type `./min-cut instances/in/<instance_to_execute> instances/out/<instance_to_execute>`
