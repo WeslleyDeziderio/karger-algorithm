@@ -1,6 +1,6 @@
 <h2 align="center">Project 3 | Implementation and empirical analysis of the Karger algorithm</h2>
 
-In this porject, you must implement, in any programming language, the Karger algorithm
+In this project, you must implement, in any programming language, the Karger algorithm
 for determining a minimum cut in a simple graph. Your program will read a graph
 informed through a text file. The file format is the same as previous works (see [Project 1](https://github.com/WeslleyDeziderio/applied-graph-theory) and [Project 2](https://github.com/WeslleyDeziderio/graph-search)).
 
